@@ -48,7 +48,6 @@ def combinar_colunas_csv(caminho_csv, colunas):
         for coluna in colunas:
             texto_combinado += f"{obj[coluna]} " ## faz uma linha com os valores das colunas selecionadas
         texto_combinado += "\n" 
-        print(texto_combinado)
     return texto_combinado
 
 def transformar_dataframe_lista(df : pd.DataFrame, coluna : str) :
@@ -110,28 +109,38 @@ def consultar_banco(colecao, modelo, consulta, n_resultados=1):
 
 # Fluxo principal
 if __name__ == "__main__":
-    # Passo 1: Extrair texto
+    # # Passo 1: Extrair texto
     
-    ## CSV
-    texto_csv = combinar_colunas_csv("people-100.csv", ["First Name", "Last Name", "Job Title", "Sex"]) # extrai o dados das colunas do CSV em formato de string
+    # ## CSV
+    # texto_csv = combinar_colunas_csv("people-100.csv", ["First Name", "Last Name", "Job Title", "Sex"]) # extrai o dados das colunas do CSV em formato de string
 
-    # print(texto_csv)
+    # # print(texto_csv)
 
-    ## PDF
-    # texto = ler_pdf("chapeuzinho.pdf")
+    # ## PDF
+    # # texto = ler_pdf("chapeuzinho.pdf")
     
-    # Passo 2: Pré-processar
-    texto_tratado = tratamento_pln(texto_csv)
+    # # Passo 2: Pré-processar
+    # texto_tratado = tratamento_pln(texto_csv)
     
-    # # Passo 3: Criar chunks
-    chunks = criar_chunks(texto_tratado, 50)
+    # # # Passo 3: Criar chunks
+    # chunks = criar_chunks(texto_tratado, 50)
     
-    # # Passo 4: Banco vetorial
-    colecao, modelo = criar_banco_vetorial(chunks, "peoples")
+    # # # Passo 4: Banco vetorial
+    # colecao, modelo = criar_banco_vetorial(chunks, "peoples")
     
-    # # Passo 5: Consulta de exemplo
-    resultados = consultar_banco(colecao, modelo, "Audiological",10) 
+    # # # Passo 5: Consulta de exemplo
+    # resultados = consultar_banco(colecao, modelo, "Audiological",10) 
     
+    texto_porquinhos = ler_pdf("os_3_porquinhos.pdf")
+
+    texto_tratado_porquinhos = tratamento_pln(texto=texto_porquinhos)
+
+    chunks = criar_chunks(texto_tratado_porquinhos)
+
+    colecao, modelo = criar_banco_vetorial(chunks=chunks,nome_colecao="tres_porquinhos")
+
+    resultados = consultar_banco(colecao=colecao, modelo=modelo, consulta="casa de madeira", n_resultados=10)
+
     # # Exibir resultados
     for i in range(len(resultados['ids'][0])):
         print(f"ID: {resultados['ids'][0][i]}")
