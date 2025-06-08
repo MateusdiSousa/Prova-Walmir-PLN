@@ -1,0 +1,10 @@
+A prova prática terá como o foco em processamento de linguagem natural. onde haverá um arquivo CSV que realizaremos a extração
+dos dados que serão pedidos. depois disso será necessário transformar esses dados extraidos em chunks e adicionar um overlap 
+adequado para armazena-los em um banco vetorial. e no final será necessário realizar uma query no banco vetorial.
+
+FORMATO DA PROVA:
+PERGUNTA.
+CODÍGO RESOLVENDO O PROBLEMA COM COMENTÁRIOS.
+COMENTÁRIO EXPLICANDO O OUTPUT E EXPLICAÇÃO DO CÓDIGO.
+
+APÓS AS PERGUNTAS SEREM RESPONDIDAS SERÁ NECESSÁRIO GRAVAR UM VÍDEO DA PROVA RODANDO E DEPOIS POSTAR NO YOUTUBE.
