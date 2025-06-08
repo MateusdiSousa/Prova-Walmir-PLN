@@ -79,24 +79,27 @@ def criar_chunks(texto, tamanho=30, overlap=10):
     return splitter.split_text(texto) # retorna os chunks 
 
 # 4. Geração de embeddings e armazenamento
-def criar_banco_vetorial(chunks, nome_colecao="colecao_teste"):
+def criar_banco_vetorial(nome_colecao="colecao_teste"):
     # Gerar embeddings
     model = SentenceTransformer('all-MiniLM-L6-v2') ## instancia o modelo de geração de embeddings
-    embeddings = model.encode(chunks) ## transforma os chunks em embeddings para serem armazenados no banco vetorial
     
     # Criar banco vetorial
     client = chromadb.Client() ## instância o banco de dados
     collection = client.create_collection(name=nome_colecao) ## cria a collection
     
-    # Adicionar documentos
+    return collection, model
+
+def adicionar_chunks(chunks, collection, model):
+    embeddings = model.encode(chunks) ## transforma os chunks em embeddings para serem armazenados no banco vetorial
     ids = [f"doc_{i}" for i in range(len(chunks))] ## Cria os ids dos documentos a partir da quantidade de chunks que serão armazenados
+    
+    # Adicionar documentos
     collection.add(
         documents=chunks,
         embeddings=embeddings.tolist(),  
         ids=ids
     ) ## adiciona os dados vetorizados na collection
-    
-    return collection, model
+    return
 
 # 5. Função de consulta
 def consultar_banco(colecao, modelo, consulta, n_resultados=1):
@@ -135,11 +138,13 @@ if __name__ == "__main__":
 
     texto_tratado_porquinhos = tratamento_pln(texto=texto_porquinhos)
 
-    chunks = criar_chunks(texto_tratado_porquinhos)
+    chunks = criar_chunks(texto_tratado_porquinhos, tamanho=100, overlap=30)
 
-    colecao, modelo = criar_banco_vetorial(chunks=chunks,nome_colecao="tres_porquinhos")
+    colecao, modelo = criar_banco_vetorial(nome_colecao="tres_porquinhos")
 
-    resultados = consultar_banco(colecao=colecao, modelo=modelo, consulta="casa de madeira", n_resultados=10)
+    adicionar_chunks(chunks=chunks, collection=colecao, model=modelo)
+
+    resultados = consultar_banco(colecao=colecao, modelo=modelo, consulta="lobo mal assoprou", n_resultados=10)
 
     # # Exibir resultados
     for i in range(len(resultados['ids'][0])):
