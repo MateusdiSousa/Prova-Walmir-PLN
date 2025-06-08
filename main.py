@@ -110,45 +110,55 @@ def consultar_banco(colecao, modelo, consulta, n_resultados=1):
     )
     return resultados
 
-# Fluxo principal
-if __name__ == "__main__":
-    # # Passo 1: Extrair texto
-    
-    # ## CSV
-    # texto_csv = combinar_colunas_csv("people-100.csv", ["First Name", "Last Name", "Job Title", "Sex"]) # extrai o dados das colunas do CSV em formato de string
 
-    # # print(texto_csv)
-
-    # ## PDF
-    # # texto = ler_pdf("chapeuzinho.pdf")
-    
-    # # Passo 2: Pré-processar
-    # texto_tratado = tratamento_pln(texto_csv)
-    
-    # # # Passo 3: Criar chunks
-    # chunks = criar_chunks(texto_tratado, 50)
-    
-    # # # Passo 4: Banco vetorial
-    # colecao, modelo = criar_banco_vetorial(chunks, "peoples")
-    
-    # # # Passo 5: Consulta de exemplo
-    # resultados = consultar_banco(colecao, modelo, "Audiological",10) 
-    
-    texto_porquinhos = ler_pdf("os_3_porquinhos.pdf")
-
-    texto_tratado_porquinhos = tratamento_pln(texto=texto_porquinhos)
-
-    chunks = criar_chunks(texto_tratado_porquinhos, tamanho=100, overlap=30)
-
-    colecao, modelo = criar_banco_vetorial(nome_colecao="tres_porquinhos")
-
-    adicionar_chunks(chunks=chunks, collection=colecao, model=modelo)
-
-    resultados = consultar_banco(colecao=colecao, modelo=modelo, consulta="lobo mal assoprou", n_resultados=10)
-
-    # # Exibir resultados
+def ExibirResultados(resultados):
     for i in range(len(resultados['ids'][0])):
         print(f"ID: {resultados['ids'][0][i]}")
         print(f"Documento: {resultados['documents'][0][i]}")
         print(f"Distância: {resultados['distances'][0][i]}")
         print("-" * 40)
+# Fluxo principal
+if __name__ == "__main__":
+    print("\n============================== CSV =====================================\n")
+    
+    # 1º Passo Extrair texto do CSV
+    texto_csv = combinar_colunas_csv("people-100.csv", ["First Name", "Last Name", "Job Title"])
+
+    # 2º Passo: Pré processar o texto
+    texto_csv_tratado = tratamento_pln(texto=texto_csv)
+
+    # 3º Passo: Transformar o texto em chunks
+    chunks_csv = criar_chunks(texto_csv_tratado, tamanho=40, overlap=10)
+
+    # 4º Passo: Criar o banco vetorial e o modelo de embedding
+    colecao_people, modelo1 = criar_banco_vetorial(nome_colecao="peolple")
+
+    # 5º Passo: Transformar os chunks em embeddings e adicionar ao banco vetorial
+    adicionar_chunks(chunks=chunks_csv, collection=colecao_people, model=modelo1)
+
+    # 6º Passo: Realizar query no banco de dados
+    resultados_csv = consultar_banco(colecao=colecao_people, modelo=modelo1, consulta="Game Developer", n_resultados=3)
+    ExibirResultados(resultados=resultados_csv)
+
+    print("\n============================== PDF =====================================\n")
+
+    # 1º Passo Extrair texto do PDF
+    texto_porquinhos = ler_pdf("os_3_porquinhos.pdf")
+
+    # 2º Passo: Pré processar o texto
+    texto_tratado_porquinhos = tratamento_pln(texto=texto_porquinhos)
+
+    # 3º Passo: Transformar o texto em chunks
+    chunks = criar_chunks(texto_tratado_porquinhos, tamanho=100, overlap=30)
+
+    # 4º Passo: Criar o banco vetorial e o modelo de embedding
+    colecao, modelo = criar_banco_vetorial(nome_colecao="tres_porquinhos")
+
+    # 5º Passo: Transformar os chunks em embeddings e adicionar ao banco vetorial
+    adicionar_chunks(chunks=chunks, collection=colecao, model=modelo)
+
+    # 6º Passo: Realizar query no banco de dados
+    resultados = consultar_banco(colecao=colecao, modelo=modelo, consulta="lobo mal assoprou", n_resultados=3)
+
+    # # Exibir resultados
+    ExibirResultados(resultados=resultados)    
