@@ -85,9 +85,13 @@ def criar_banco_vetorial(nome_colecao="colecao_teste"):
     
     # Criar banco vetorial
     client = chromadb.Client() ## instância o banco de dados
-    collection = client.create_collection(name=nome_colecao) ## cria a collection
     
-    return collection, model
+    try:
+        collection = client.get_collection(name=nome_colecao) ## cria a collection
+        return collection, model
+    except Exception:
+        collection = client.create_collection(name=nome_colecao)
+        return collection, model
 
 def adicionar_chunks(chunks, collection, model):
     embeddings = model.encode(chunks) ## transforma os chunks em embeddings para serem armazenados no banco vetorial
